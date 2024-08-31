@@ -8,11 +8,23 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      fontFamily: {
+        title: ['Lobster', 'cursive'],
+        sans: ['GmarketSans', 'sans-serif'],
+        clan: ['var(--font-clan)', 'sans-serif'],
+        sl: ['var(--font-sl)', 'sans-serif'],
+        noto: ['var(--font-noto)', 'sans-serif'],
       },
+      colors: {
+        'half-red': '#e06c75',
+        'half-green': '#98c379',
+        'half-yellow': '#e5c07b',
+        'half-blue': '#61afef',
+        'half-purple': '#c678dd',
+        'half-cyan': '#56b6c2',
+        'half-white': '#dcdfe4',
+        'half-black': '#282c34',
+      }
     },
   },
   plugins: [],
