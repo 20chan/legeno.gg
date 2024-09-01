@@ -3,7 +3,7 @@ import Link from 'next/link'
 export default async function Home() {
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center pb-10 bg-half-black text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center pb-10">
       <div className='text-7xl sm:text-9xl font-title'>
         legeno.
         <span className='text-half-red'>gg</span>
@@ -15,7 +15,7 @@ export default async function Home() {
 
       <div className='flex flex-col items-center flex-wrap gap-y-4 mt-8 w-full'>
         <Link href='/tournaments' className='flex flex-col justify-center items-center w-96 max-w-[90%] py-2 bg-half-yellow/70 hover:bg-half-yellow/50'>
-          <div className='text-4xl sm:text-6xl mb-3 font-title'>
+          <div className='text-4xl sm:text-5xl mb-1 font-title'>
             tournaments
           </div>
 
@@ -25,12 +25,12 @@ export default async function Home() {
         </Link>
 
         <Link href='/clanwar' className='flex flex-col justify-center items-center w-96 max-w-[90%] py-2 bg-half-yellow/70 hover:bg-half-yellow/50'>
-          <div className='text-4xl sm:text-6xl mb-3 font-title'>
+          <div className='text-4xl sm:text-5xl mb-1 font-title'>
             clan war
           </div>
 
           <div className='text-lg'>
-            24 클랜전
+            2024 클랜전
           </div>
         </Link>
 

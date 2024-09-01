@@ -23,3 +23,22 @@ model AuthToken {
   userId String
   token String @unique
 }
+
+model Tournament {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  userId String
+
+  startDate DateTime @default(now())
+
+  title String
+  teamIds String
+  clanNames String
+  teamMembers String
+  maps String
+  wins String
+
+  thirdPlaceEnabled Boolean
+  thirdPlaceWinIndex Int
+  thirdPlaceMaps String
+}

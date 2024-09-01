@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local';
 import './globals.css'
+import { ServerAuthProvider } from '@/components/ServerAuthProvider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,7 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans m-0 ${clanFont.variable} ${slFont.variable} ${notoFont.variable}`}>
-        {children}
+        <div className='min-h-screen'>
+          <ServerAuthProvider>
+            {children}
+          </ServerAuthProvider>
+        </div>
       </body>
     </html>
   )

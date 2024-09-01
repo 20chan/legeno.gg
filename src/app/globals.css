@@ -46,3 +46,21 @@ body {
   font-style: normal;
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
 }
+
+.place-gold {
+  background-image:
+    linear-gradient(135deg, #ff6663, #feb144, #fdfd97, #9ee09e, #9ec1cf, #eab308, #ff6663);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-animation 20s linear infinite;
+}
+
+.place-silver {
+  background-image:
+    linear-gradient(135deg, silver, #e5e7eb, silver);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-animation 20s linear infinite;
+}
