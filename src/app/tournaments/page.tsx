@@ -12,7 +12,7 @@ export default async function Page() {
         <span className='text-half-red'>gg</span>
       </Link>
 
-      <div className='text-lg sm:text-xl font-sans mt-5'>
+      <div className='text-xl sm:text-2xl font-sans mt-5'>
         대회 토너먼트
       </div>
 
