@@ -17,7 +17,7 @@ const nextConfig = (phase) => {
           hostname: 'cdn.discordapp.com',
           port: '',
           pathname: '**',
-        }
+        },
       ]
     }
   }

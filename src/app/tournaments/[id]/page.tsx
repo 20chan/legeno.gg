@@ -70,7 +70,7 @@ export default function TournamentPage({ params }: {
   }, [tournament]);
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center mt-10 pb-10 bg-half-black text-half-white">
+    <main className="relative flex min-h-screen flex-col items-center pt-10 pb-10 bg-half-black text-half-white">
       <Link href='/' className='text-6xl sm:text-7xl font-title'>
         legeno.
         <span className='text-half-red'>gg</span>

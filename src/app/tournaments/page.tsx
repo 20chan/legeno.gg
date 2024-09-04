@@ -1,12 +1,17 @@
+import { SignIn } from '@/components/SignIn';
+import { authOptions } from '@/lib/auth';
 import { getTournaments } from '@/lib/db/tournament';
+import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 
 export default async function Page() {
+  const session = await getServerSession(authOptions);
+
   const tournaments = await getTournaments({});
   tournaments.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
   return (
-    <main className="flex min-h-screen flex-col items-center mt-10 pb-10">
+    <main className="flex min-h-screen flex-col items-center pt-10 pb-10">
       <Link href='/' className='text-6xl sm:text-7xl font-title'>
         legeno.
         <span className='text-half-red'>gg</span>
@@ -38,6 +43,24 @@ export default async function Page() {
           )
         })}
       </div>
+
+
+
+      {
+        session ? (
+          <div className='mt-12 text-sm'>
+            logged in as {session.user?.name}
+          </div>
+        ) : (
+          <div className='mt-12 w-80 max-w-full'>
+            <SignIn className='px-2 pt-5 pb-4 text-xl' footer={(
+              <div className='text-xs text-center'>
+                로그인 후 토너먼트를 생성할 수 있습니다.
+              </div>
+            )} />
+          </div>
+        )
+      }
     </main>
   );
 }
