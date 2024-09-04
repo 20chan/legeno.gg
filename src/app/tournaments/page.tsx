@@ -1,8 +1,23 @@
 import { SignIn } from '@/components/SignIn';
 import { authOptions } from '@/lib/auth';
-import { getTournaments } from '@/lib/db/tournament';
+import { TournamentModel, createTournament, getTournaments } from '@/lib/db/tournament';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+async function createNew() {
+  'use server'
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return;
+  }
+
+  const userId = (session?.user as any).id as string;
+
+  const created = await createTournament(TournamentModel.createNew(userId));
+  redirect(`/tournaments/${created.id}`);
+}
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -23,17 +38,18 @@ export default async function Page() {
 
       <div className='flex flex-col items-stretch max-w-[90%] w-[48rem] flex-wrap gap-y-4 mt-8'>
         {tournaments.map(tournament => {
-          const isEnded = tournament.thirdPlaceEnabled;
+          const ts = new Date(tournament.startDate);
+          const isEnded = ts.getTime() < Date.now();
 
           return (
-            <Link key={tournament.id} href={`/tournaments/${tournament.id}`} className={`py-4 px-4 ${isEnded ? 'bg-half-green/70 hover:bg-half-green/50' : 'bg-half-yellow/70 hover:bg-half-yellow/50'}
+            <Link key={tournament.id} href={`/tournaments/${tournament.id}`} className={`py-4 px-4 ${isEnded ? 'bg-half-green/70 hover:bg-half-green/50' : 'bg-half-blue/70 hover:bg-half-blue/50'}
             `}>
               <div className='text-2xl font-sans font-bold'>
                 {tournament.title}
               </div>
 
               <div className=''>
-                {tournament.startDate.toLocaleDateString()}
+                {ts.getFullYear()}/{`${ts.getMonth() + 1}`.padStart(2, '0')}/{`${ts.getDate()}`.padStart(2, '0')}
 
                 <span>
                   {' '}({isEnded ? '종료' : '진행중'})
@@ -42,9 +58,22 @@ export default async function Page() {
             </Link>
           )
         })}
+
+        {
+          session?.user && (
+            <form action={createNew} className='relative p-4 flex flex-col justify-center items-center bg-half-yellow/70 hover:bg-half-green/50'>
+              <input type='submit' className='w-full h-full absolute inset-0 opacity-0 cursor-pointer' />
+              <div className='text-2xl font-sans font-bold'>
+                새로 생성
+              </div>
+
+              <div className=''>
+                새로운 토너먼트를 생성합니다.
+              </div>
+            </form>
+          )
+        }
       </div>
-
-
 
       {
         session ? (

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { TournamentEditor } from './TournamentEditor';
 
 export default function TournamentPage({ params }: {
   params: { id: string },
@@ -32,7 +33,7 @@ export default function TournamentPage({ params }: {
       setTournament(data.tournament);
       setIsOwner(data.isOwner);
     })();
-  }, [id]);
+  }, [router, id]);
 
   useEffect(() => {
     (async () => {
@@ -40,12 +41,12 @@ export default function TournamentPage({ params }: {
         return;
       }
 
-      await fetch(`/api/champ/${id}`, {
+      await fetch(`/api/tournament/${id}`, {
         method: 'PATCH',
         body: JSON.stringify({ tournament }),
       });
     })();
-  }, [tournament]);
+  }, [id, session?.user, tournament]);
 
   const winHandler = useCallback((depth: number, index: number, isThirdMatch: boolean) => {
     setTournament(x => {
@@ -54,7 +55,7 @@ export default function TournamentPage({ params }: {
       }
       return updateWin(x, { depth, index, isThirdMatch })
     });
-  }, [setTournament]);
+  }, [session?.user, setTournament]);
 
   const mapHandler = useCallback((depth: number, index: number, count: number, isThirdMatch: boolean) => {
     setTournament(x => {
@@ -63,7 +64,7 @@ export default function TournamentPage({ params }: {
       }
       return updateMap(x, { depth, index, count, isThirdMatch })
     })
-  }, [setTournament]);
+  }, [session?.user, setTournament]);
 
   const finalRanks = useMemo(() => {
     return tournament ? getFinalRanks(tournament) : [];
@@ -80,15 +81,6 @@ export default function TournamentPage({ params }: {
         {tournament?.title}
       </div>
 
-      {
-        (isEditing && tournament) && (
-          <div className='absolute inset-0 z-50 bg-black/80 flex flex-col justify-center items-center'>
-            <div className='bg-half-black w-2/3 h-4/5'>
-            </div>
-          </div>
-        )
-      }
-
       <div className='relative max-w-full overflow-scroll'>
         <TournamentContext.Provider value={{
           mapHandler,
@@ -102,7 +94,7 @@ export default function TournamentPage({ params }: {
         </TournamentContext.Provider>
       </div>
 
-      <div className=' sm:fixed sm:right-4 sm:bottom-4 z-10'>
+      <div className='sm:fixed sm:right-4 sm:bottom-4 z-10'>
         <div className='flex flex-row items-end'>
           <div className='mr-4 text-lg sm:text-2xl'>
             {
@@ -137,6 +129,31 @@ export default function TournamentPage({ params }: {
           </div>
         </div>
       </div>
+
+      <div className='absolute bottom-4 right-4'>
+        {
+          isOwner && (
+            <button onClick={() => setIsEditing(x => !x)} className='bg-half-yellow/70 hover:bg-half-yellow/50 px-4 py-2 rounded'>
+              대회 설정
+            </button>
+          )
+        }
+      </div>
+
+      {
+        (isEditing && tournament) && (
+          <div className='absolute inset-0 z-50 bg-black/80 flex flex-col justify-center items-center'>
+            <div className='bg-half-black w-[80rem] max-w-full h-4/5'>
+              <TournamentEditor
+                tournament={tournament}
+                onEdit={setTournament}
+                onClose={() => setIsEditing(false)}
+                router={router}
+              />
+            </div>
+          </div>
+        )
+      }
     </main>
   )
 }

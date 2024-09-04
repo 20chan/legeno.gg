@@ -141,3 +141,14 @@ export async function updateTournament(model: TournamentModel): Promise<Tourname
 
   return updated;
 }
+
+
+export async function deleteTournament(id: string): Promise<Tournament> {
+  const deleted = await prisma.tournament.delete({
+    where: {
+      id,
+    },
+  });
+
+  return deleted;
+}
