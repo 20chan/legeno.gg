@@ -19,6 +19,7 @@ export default function TournamentPage({ params }: {
   const [tournament, setTournament] = useState<TournamentModel | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isShowResult, setIsShowResult] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -94,41 +95,51 @@ export default function TournamentPage({ params }: {
         </TournamentContext.Provider>
       </div>
 
-      <div className='sm:fixed sm:right-4 sm:bottom-4 z-10'>
-        <div className='flex flex-row items-end'>
-          <div className='mr-4 text-lg sm:text-2xl'>
-            {
-              tournament && finalRanks.map(x => {
-                const team = tournament.teams.find(y => y.id === x.id)!;
-                return (
-                  <div key={x.id}>
-                    <span className={classNames('font-bold mr-2.5 w-12 inline-block', {
-                      'text-yellow-500': x.rank === 1,
-                      'text-[silver]': x.rank === 2,
-                      'text-amber-600': x.rank === 3,
-                      'text-half-white/60': x.rank === 4,
-                    })}>
-                      {x.rank}등:
-                    </span>
-                    <span className='font-clan mr-3 text-yellow-500 sm:w-[4.5rem] inline-block text-right'>
-                      {team.clan}
-                    </span>
+      {
+        tournament && finalRanks.length > 0 && (
+          <div className='fixed bottom-0 mx-auto'>
+            <button onClick={() => setIsShowResult(x => !x)} className='bg-half-red/70 hover:bg-half-red/50 px-4 py-2 min-w-96 w-96 sm:w-full'>
+              경기 결과
+            </button>
 
-                    <span className={classNames({
-                      'place-gold': x.rank === 1,
-                      'place-silver': x.rank === 2,
-                      'text-amber-600': x.rank === 3,
-                      'text-half-white/60': x.rank === 4,
-                    })}>
-                      {team.members.join(' ')}
-                    </span>
-                  </div>
-                )
-              })
+            {
+              isShowResult && (
+                <div className='border-half-red/70 border-2 p-4 sm:text-2xl'>
+                  {
+                    finalRanks.map(x => {
+                      const team = tournament.teams.find(y => y.id === x.id)!;
+                      return (
+                        <div key={x.id}>
+                          <span className={classNames('font-mono mr-1 w-16 inline-block', {
+                            'font-bold text-yellow-500': x.rank === 1,
+                            'font-bold text-[silver]': x.rank === 2,
+                            'font-bold text-amber-600': x.rank === 3,
+                            'text-half-white/60': x.rank === 4,
+                          })}>
+                            {x.rank}등:
+                          </span>
+                          <span className='font-clan mr-3 text-yellow-500 sm:w-[4rem] inline-block text-right'>
+                            {team.clan}
+                          </span>
+
+                          <span className={classNames({
+                            'place-gold': x.rank === 1,
+                            'place-silver': x.rank === 2,
+                            'text-amber-600': x.rank === 3,
+                            'text-half-white/60': x.rank === 4,
+                          })}>
+                            {team.members.join(' ')}
+                          </span>
+                        </div>
+                      )
+                    })
+                  }
+                </div>
+              )
             }
           </div>
-        </div>
-      </div>
+        )
+      }
 
       <div className='absolute bottom-4 right-4'>
         {
