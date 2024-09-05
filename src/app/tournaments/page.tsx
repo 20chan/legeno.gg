@@ -39,6 +39,7 @@ export default async function Page() {
       <div className='flex flex-col items-stretch max-w-[90%] w-[48rem] flex-wrap gap-y-4 mt-8'>
         {tournaments.map(tournament => {
           const ts = new Date(tournament.startDate);
+          const isStarted = Date.now() - ts.getTime() > 24 * 60 * 60 * 1000;
           const isEnded = ts.getTime() < Date.now();
 
           return (
