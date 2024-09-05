@@ -104,7 +104,7 @@ export default function TournamentPage({ params }: {
 
             {
               isShowResult && (
-                <div className='border-half-red/70 border-2 p-4 sm:text-2xl'>
+                <div className='bg-half-black border-half-red/70 border-2 p-4 sm:text-2xl'>
                   {
                     finalRanks.map(x => {
                       const team = tournament.teams.find(y => y.id === x.id)!;
