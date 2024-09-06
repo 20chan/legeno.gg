@@ -1,3 +1,4 @@
+import { Contact } from '@/components/Contact'
 import Link from 'next/link'
 
 export default async function Home() {
@@ -34,6 +35,10 @@ export default async function Home() {
           </div>
         </Link>
 
+      </div>
+
+      <div className='absolute bottom-14'>
+        <Contact />
       </div>
     </main>
   )

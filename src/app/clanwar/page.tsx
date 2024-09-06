@@ -1,3 +1,4 @@
+import { Contact } from '@/components/Contact';
 import Link from 'next/link';
 
 export default function Page() {
@@ -19,6 +20,10 @@ export default function Page() {
         <p>
           자세한건 몰?루
         </p>
+      </div>
+
+      <div className='absolute bottom-14'>
+        <Contact />
       </div>
     </main>
   )

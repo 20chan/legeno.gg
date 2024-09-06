@@ -99,7 +99,7 @@ export default function TournamentPage({ params }: {
         tournament && finalRanks.length > 0 && (
           <div className='fixed bottom-0 mx-auto'>
             <button onClick={() => setIsShowResult(x => !x)} className='bg-half-red/70 hover:bg-half-red/50 px-4 py-2 min-w-96 w-96 sm:w-full'>
-              경기 결과
+              경기 결과 {isShowResult ? '닫기' : '열기'}
             </button>
 
             {

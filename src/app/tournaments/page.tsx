@@ -1,3 +1,4 @@
+import { Contact } from '@/components/Contact';
 import { SignIn } from '@/components/SignIn';
 import { authOptions } from '@/lib/auth';
 import { TournamentModel, createTournament, getTournaments } from '@/lib/db/tournament';
@@ -91,6 +92,10 @@ export default async function Page() {
           </div>
         )
       }
+
+      <div className='absolute bottom-14'>
+        <Contact />
+      </div>
     </main>
   );
 }
