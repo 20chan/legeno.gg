@@ -1,5 +1,7 @@
 import { Contact } from '@/components/Contact';
 import Link from 'next/link';
+import Image from 'next/image';
+import logoImage from './logo.png';
 
 export default function Page() {
   return (
@@ -12,6 +14,8 @@ export default function Page() {
       <div className='text-xl sm:text-2xl font-sans mt-5'>
         클랜전
       </div>
+
+      <Image src={logoImage} alt='logo' width={300} height={310} className='mt-16' />
 
       <div className='mt-10'>
         <p>

@@ -364,25 +364,31 @@ export function Bracket({
           }
         }}
       />
-      <div className='absolute bottom-56 right-[calc(50%-675px)] translate-x-[50%]'>
-        <SingleEliminationBracket
-          matches={createThirdPlaceMatches(model)}
-          matchComponent={Match}
-          theme={theme}
-          options={{
-            style: {
-              width: 400,
-              boxHeight: 120,
-              connectorColor: '#6c757d',
-              connectorColorHighlight: '#20c997',
-              spaceBetweenRows: -10,
-              roundHeader: {
-                isShown: false,
-              },
-            }
-          }}
-        />
-      </div>
+      {
+        model.thirdPlaceEnabled && (
+          <div className={model.teams.length === 16
+            ? 'absolute bottom-56 right-[calc(50%-675px)] translate-x-[50%]'
+            : 'absolute bottom-14 right-[calc(50%-450px)] translate-x-[50%]'}>
+            <SingleEliminationBracket
+              matches={createThirdPlaceMatches(model)}
+              matchComponent={Match}
+              theme={theme}
+              options={{
+                style: {
+                  width: 400,
+                  boxHeight: 120,
+                  connectorColor: '#6c757d',
+                  connectorColorHighlight: '#20c997',
+                  spaceBetweenRows: -10,
+                  roundHeader: {
+                    isShown: false,
+                  },
+                }
+              }}
+            />
+          </div>
+        )
+      }
     </div>
   );
 }

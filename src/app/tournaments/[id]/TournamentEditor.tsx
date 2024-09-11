@@ -81,6 +81,35 @@ export function TournamentEditor({
     }
   }, [tournament.id, router]);
 
+  const setThirdPlaceEnabled = useCallback((enabled: boolean) => {
+    setNewTournament(x => {
+      return {
+        ...x,
+        thirdPlaceEnabled: enabled,
+      };
+    });
+  }, [setNewTournament]);
+
+  const shrinkTo8 = useCallback(() => {
+    setNewTournament(x => ({
+      ...x,
+      teams: x.teams.slice(0, 8),
+    }));
+  }, [setNewTournament]);
+
+  const expandTo16 = useCallback(() => {
+    setNewTournament(x => ({
+      ...x,
+      teams: x.teams.concat(new Array(8).fill(0).map((_, i) => ({
+        id: i + 9,
+        clan: '',
+        members: ['', '', ''],
+        maps: [],
+        wins: [],
+      }))),
+    }));
+  }, [setNewTournament]);
+
   return (
     <div className='flex flex-col h-full px-4 py-8 gap-y-4'>
       <div className='text-4xl text-center'>
@@ -285,6 +314,22 @@ export function TournamentEditor({
 
         <button onClick={deleteTournament} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
           대회 삭제
+        </button>
+
+        <button onClick={() => setThirdPlaceEnabled(true)} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
+          3위전 활성화
+        </button>
+
+        <button onClick={() => setThirdPlaceEnabled(false)} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
+          3위전 비활성화
+        </button>
+
+        <button onClick={shrinkTo8} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
+          8팀으로 축소
+        </button>
+
+        <button onClick={expandTo16} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
+          16팀으로 확장
         </button>
       </div>
 
