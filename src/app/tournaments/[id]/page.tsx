@@ -82,7 +82,7 @@ export default function TournamentPage({ params }: {
         {tournament?.title}
       </div>
 
-      <div className='relative max-w-full overflow-scroll'>
+      <div className='relative max-w-full overflow-x-auto'>
         <TournamentContext.Provider value={{
           mapHandler,
           winHandler,
