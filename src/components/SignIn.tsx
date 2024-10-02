@@ -26,6 +26,8 @@ export function SignIn({
     <button
       onClick={() => {
         signIn('discord');
+        const { umami } = window as any;
+        umami.track('discord-sign-in-button');
       }}
       className={classNames('block bg-[#5865f2] rounded w-full', className)}
     >

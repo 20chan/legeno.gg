@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import localFont from 'next/font/local';
 import './globals.css'
 import { ServerAuthProvider } from '@/components/ServerAuthProvider';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,6 +30,8 @@ export default function RootLayout({
           </ServerAuthProvider>
         </div>
       </body>
+
+      <Script async src="https://umami.0ch.me/script.js" data-website-id="a343e0d2-38bd-4a64-9907-471afcd96b77" />
     </html>
   )
 }
