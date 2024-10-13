@@ -10,6 +10,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { TournamentEditor } from './TournamentEditor';
+import { BracketV2 } from '@/components/Bracket_v2';
+import { TournamentV2Model } from '@/lib/db/tournament_v2';
 
 export default function TournamentPage({ params }: {
   params: { id: string },
@@ -89,7 +91,7 @@ export default function TournamentPage({ params }: {
         }}>
           {
             tournament && (
-              <Bracket model={tournament} />
+              <BracketV2 model={TournamentV2Model.migrateFromV1(tournament)} />
             )
           }
         </TournamentContext.Provider>

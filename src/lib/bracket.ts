@@ -13,6 +13,7 @@ export const mapNames = [
 export type ParticipantExt = ParticipantType & {
   clan: string;
   members: string[];
+  maps: number[] | null;
   depth: number;
   index: number;
 
@@ -95,7 +96,7 @@ export function getEnemyPosition(depth: number, index: number): { depth: number,
  * 1
  */
 
-function createParticipants(teams: TournamentTeamModel[],): ParticipantExt[] {
+export function createParticipants(teams: TournamentTeamModel[],): ParticipantExt[] {
   const maxDepth = Math.ceil(Math.log2(teams.length));
   const result: ParticipantExt[] = [];
 

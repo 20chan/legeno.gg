@@ -37,4 +37,9 @@ export const mapInfos = [
     name: '공장',
     image: Map6,
   },
+  {
+    id: 7,
+    name: '콩밭',
+    image: Map7,
+  }
 ]

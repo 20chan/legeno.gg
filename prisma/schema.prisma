@@ -42,3 +42,16 @@ model Tournament {
   thirdPlaceWinIndex Int
   thirdPlaceMaps String
 }
+
+model TournamentV2 {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  startDate DateTime @default(now())
+
+  userId String
+  title String
+  optionsSerialized String
+
+  teamsSerialized String
+  matchesSerialized String
+}
