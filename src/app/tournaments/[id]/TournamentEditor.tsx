@@ -117,7 +117,7 @@ export function TournamentEditor({
       </div>
 
       <div className='flex flex-row'>
-        <div className='w-20 mr-6'>
+        <div className='w-24 mr-2'>
           대회 이름:
         </div>
 
@@ -132,7 +132,7 @@ export function TournamentEditor({
       </div>
 
       <div className='flex flex-row'>
-        <div className='w-20 mr-6'>
+        <div className='w-24 mr-2'>
           대회 시작일:
         </div>
 
@@ -154,7 +154,7 @@ export function TournamentEditor({
 
       <div className='flex flex-row'>
         <div className='flex flex-row'>
-          <div className='w-20 mr-6'>
+          <div className='w-24 mr-2'>
             팀 설정:
           </div>
 
