@@ -40,9 +40,6 @@ export interface TournamentV2MatchModel {
     prevMatch1Id: number | null;
     prevMatch2Id: number | null;
 
-    prevMatch1Win: boolean | null;
-    prevMatch2Win: boolean | null;
-
     match1TeamId: number | null;
     match2TeamId: number | null;
 

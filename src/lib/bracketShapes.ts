@@ -185,8 +185,6 @@ export function createMatchesFromShape(count: number): TournamentV2MatchModel[] 
         mapCount,
         prevMatch1Id: x.match1 ?? null,
         prevMatch2Id: x.match2 ?? null,
-        prevMatch1Win: true,
-        prevMatch2Win: true,
         match1TeamId: x.team1 !== undefined ? x.team1 + 1 : null,
         match2TeamId: x.team2 !== undefined ? x.team2 + 1 : null,
         nextMatchId: nextMatch?.id ?? null,

@@ -40,11 +40,7 @@ export function createMatches(model: TournamentV2Model): MatchExt[] {
       const prevMatch = model.matches.find(x => x.id === match.shape.prevMatch1Id)!;
 
       if (prevMatch.winner !== null) {
-        if (match.shape.prevMatch1Win) {
-          participants.push(createParticipant(model.teams.find(x => x.id === prevMatch.winner)!));
-        } else {
-          participants.push(createParticipant(model.teams.find(x => x.id === prevMatch.loser)!));
-        }
+        participants.push(createParticipant(model.teams.find(x => x.id === prevMatch.winner)!));
       } else {
         participants.push(createEmptyParticipant(prevMatch.id, 0));
       }
@@ -59,11 +55,7 @@ export function createMatches(model: TournamentV2Model): MatchExt[] {
       const prevMatch = model.matches.find(x => x.id === match.shape.prevMatch2Id)!;
 
       if (prevMatch.winner !== null) {
-        if (match.shape.prevMatch2Win) {
-          participants.push(createParticipant(model.teams.find(x => x.id === prevMatch.winner)!));
-        } else {
-          participants.push(createParticipant(model.teams.find(x => x.id === prevMatch.loser)!));
-        }
+        participants.push(createParticipant(model.teams.find(x => x.id === prevMatch.winner)!));
       } else {
         participants.push(createEmptyParticipant(prevMatch.id, 1));
       }
