@@ -25,6 +25,10 @@ export default async function Page() {
 
   const tournaments = await getTournaments({});
 
+  const formatDate = (date: Date) => {
+    return `${date.getFullYear()}/${`${date.getMonth() + 1}`.padStart(2, '0')}/${`${date.getDate()}`.padStart(2, '0')}`;
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center pt-10 pb-10">
       <Link href='/' className='text-6xl sm:text-7xl font-title'>
@@ -39,7 +43,7 @@ export default async function Page() {
       <div className='flex flex-col items-stretch max-w-[90%] w-[48rem] flex-wrap gap-y-4 mt-8'>
         {tournaments.map(tournament => {
           const ts = new Date(tournament.startDate);
-          const isStarted = Date.now() - ts.getTime() > 24 * 60 * 60 * 1000;
+          const isStarted = formatDate(new Date()) === formatDate(ts);
           const isEnded = ts.getTime() < Date.now();
 
           return (
@@ -50,10 +54,10 @@ export default async function Page() {
               </div>
 
               <div className=''>
-                {ts.getFullYear()}/{`${ts.getMonth() + 1}`.padStart(2, '0')}/{`${ts.getDate()}`.padStart(2, '0')}
+                {formatDate(ts)}
 
                 <span>
-                  {' '}({isEnded ? '종료' : '진행중'})
+                  {' '}({isEnded ? '종료' : isStarted ? '진행중' : '예정'})
                 </span>
               </div>
             </Link>
