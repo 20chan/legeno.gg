@@ -1,7 +1,8 @@
-import { TournamentModel } from '@/lib/db/tournament';
+import { TournamentV2Model } from '@/lib/db/tournament_v2';
 import { shuffle } from '@/lib/utils/shuffle';
 import { useCallback, useMemo, useState } from 'react';
 import type { useRouter } from 'next/navigation'
+import { createMatchesFromShape } from '@/lib/bracketShapes';
 
 export function TournamentEditor({
   tournament,
@@ -9,13 +10,14 @@ export function TournamentEditor({
   onClose,
   router,
 }: {
-  tournament: TournamentModel;
-  onEdit: (tournament: TournamentModel) => void;
+    tournament: TournamentV2Model;
+    onEdit: (tournament: TournamentV2Model) => void;
   onClose: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
 
   const [newTournament, setNewTournament] = useState(tournament);
+  const [newTeamLength, setNewTeamLength] = useState(tournament.teams.length);
 
   const clear = useCallback(() => {
     setNewTournament(x => {
@@ -81,6 +83,37 @@ export function TournamentEditor({
     }
   }, [tournament.id, router]);
 
+  const changeTeamLength = useCallback(() => {
+    setNewTournament(x => {
+      if (x.teams.length === newTeamLength) {
+        return x;
+      }
+
+      const teams = x.teams.slice();
+      if (teams.length < newTeamLength) {
+        for (let i = teams.length; i < newTeamLength; i++) {
+          teams.push({
+            id: i + 1,
+            clan: '',
+            members: ['', '', ''],
+            name: '',
+          });
+        }
+      } else {
+        teams.splice(newTeamLength);
+      }
+
+      const matches = createMatchesFromShape(newTeamLength);
+      const newTournament = {
+        ...x,
+        teams,
+        matches,
+      };
+
+      return newTournament;
+    });
+  }, [newTeamLength, setNewTournament]);
+
   const setThirdPlaceEnabled = useCallback((enabled: boolean) => {
     setNewTournament(x => {
       return {
@@ -88,26 +121,6 @@ export function TournamentEditor({
         thirdPlaceEnabled: enabled,
       };
     });
-  }, [setNewTournament]);
-
-  const shrinkTo8 = useCallback(() => {
-    setNewTournament(x => ({
-      ...x,
-      teams: x.teams.slice(0, 8),
-    }));
-  }, [setNewTournament]);
-
-  const expandTo16 = useCallback(() => {
-    setNewTournament(x => ({
-      ...x,
-      teams: x.teams.concat(new Array(8).fill(0).map((_, i) => ({
-        id: i + 9,
-        clan: '',
-        members: ['', '', ''],
-        maps: [],
-        wins: [],
-      }))),
-    }));
   }, [setNewTournament]);
 
   return (
@@ -150,6 +163,38 @@ export function TournamentEditor({
           }}
         />
 
+      </div>
+
+      <div className='flex flex-row'>
+        <div className='w-24 mr-2'>
+          대회 인원:
+        </div>
+
+        <div>
+          <div className='flex flex-row'>
+            <input
+              type='number'
+              className='inline-block w-80 py-0.5 mr-2 bg-half-white/10 focus:outline-none px-2 font-mono text-xl'
+              defaultValue={tournament.teams.length}
+              min={2}
+              max={16}
+              spellCheck={false}
+              value={newTeamLength}
+              onChange={e => {
+                const length = parseInt(e.target.value);
+                setNewTeamLength(length);
+              }}
+            />
+
+            <button onClick={changeTeamLength} className='inline-block py-1 px-4 bg-half-red/50 hover:bg-half-red/70'>
+              인원 수 적용
+            </button>
+          </div>
+
+          <div className='w-80 text-sm text-center text-half-red/70'>
+            인원 수 적용 시 모든 매칭/맵 결과가 초기화 됩니다.
+          </div>
+        </div>
       </div>
 
       <div className='flex flex-row'>
@@ -322,14 +367,6 @@ export function TournamentEditor({
 
         <button onClick={() => setThirdPlaceEnabled(false)} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
           3위전 비활성화
-        </button>
-
-        <button onClick={shrinkTo8} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
-          8팀으로 축소
-        </button>
-
-        <button onClick={expandTo16} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
-          16팀으로 확장
         </button>
       </div>
 

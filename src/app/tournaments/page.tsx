@@ -1,7 +1,7 @@
 import { Contact } from '@/components/Contact';
 import { SignIn } from '@/components/SignIn';
 import { authOptions } from '@/lib/auth';
-import { TournamentModel, createTournament, getTournaments } from '@/lib/db/tournament';
+import { TournamentV2Model, createTournament, getTournaments } from '@/lib/db/tournament_v2';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -16,7 +16,7 @@ async function createNew() {
 
   const userId = (session?.user as any).id as string;
 
-  const created = await createTournament(TournamentModel.createNew(userId));
+  const created = await createTournament(TournamentV2Model.createNew(userId, 16));
   redirect(`/tournaments/${created.id}`);
 }
 
@@ -24,7 +24,6 @@ export default async function Page() {
   const session = await getServerSession(authOptions);
 
   const tournaments = await getTournaments({});
-  tournaments.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
   return (
     <main className="flex min-h-screen flex-col items-center pt-10 pb-10">

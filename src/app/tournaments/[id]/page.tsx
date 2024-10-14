@@ -1,9 +1,8 @@
 'use client';
 
-import { Bracket } from '@/components/Bracket';
 import { TournamentContext } from '@/components/TournamentProvider';
-import type { TournamentModel } from '@/lib/db/tournament';
-import { getFinalRanks, updateMap, updateWin } from '@/lib/tournamentHelper';
+import type { TournamentV2Model } from '@/lib/db/tournament_v2';
+import { getFinalRanks, updateMap, updateWin } from '@/lib/tournamentHelper_v2';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,14 +10,13 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { TournamentEditor } from './TournamentEditor';
 import { BracketV2 } from '@/components/Bracket_v2';
-import { TournamentV2Model } from '@/lib/db/tournament_v2';
 
 export default function TournamentPage({ params }: {
   params: { id: string },
 }) {
   const { id } = params;
 
-  const [tournament, setTournament] = useState<TournamentModel | null>(null);
+  const [tournament, setTournament] = useState<TournamentV2Model | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isShowResult, setIsShowResult] = useState(false);
@@ -51,21 +49,21 @@ export default function TournamentPage({ params }: {
     })();
   }, [id, session?.user, tournament]);
 
-  const winHandler = useCallback((depth: number, index: number, isThirdMatch: boolean) => {
+  const winHandler = useCallback((matchId: number, teamId: number, isThirdMatch: boolean) => {
     setTournament(x => {
       if (!x || !session?.user) {
         return x;
       }
-      return updateWin(x, { depth, index, isThirdMatch })
+      return updateWin(x, { matchId, teamId, isThirdMatch })
     });
   }, [session?.user, setTournament]);
 
-  const mapHandler = useCallback((depth: number, index: number, count: number, isThirdMatch: boolean) => {
+  const mapHandler = useCallback((matchId: number, count: number, isThirdMatch: boolean) => {
     setTournament(x => {
       if (!x || !session?.user) {
         return x;
       }
-      return updateMap(x, { depth, index, count, isThirdMatch })
+      return updateMap(x, { matchId, count, isThirdMatch })
     })
   }, [session?.user, setTournament]);
 
@@ -91,7 +89,7 @@ export default function TournamentPage({ params }: {
         }}>
           {
             tournament && (
-              <BracketV2 model={TournamentV2Model.migrateFromV1(tournament)} />
+              <BracketV2 model={tournament} />
             )
           }
         </TournamentContext.Provider>

@@ -1,5 +1,5 @@
 
-import { MatchExt, ParticipantExt, createMatches } from '@/lib/bracket_v2';
+import { MatchExt, ParticipantExt, createMatches, createThirdPlaceMatches } from '@/lib/bracket_v2';
 import { TournamentV2Model } from '@/lib/db/tournament_v2';
 import { mapInfos } from '@/lib/sl/map';
 import {
@@ -194,7 +194,7 @@ function Match({
   const top = topParty as ParticipantExt;
   const bottom = bottomParty as ParticipantExt;
 
-  const { maps } = match as MatchExt;
+  const { maps, isThirdMatch } = match as MatchExt;
   const mapsByName = maps?.map(x => mapInfos[x - 1]?.name) ?? [];
   const isLastDepth = match.nextMatchId === null;
 
@@ -247,7 +247,7 @@ function Match({
 
             }
           </Team>
-          <Score $won={topWon} className='cursor-pointer group' onClick={() => winHandler(top.depth, top.index, top.isThirdMatch)}>
+          <Score $won={topWon} className='cursor-pointer group' onClick={() => winHandler(match.id as number, top.id as number, isThirdMatch)}>
             <span className='group-hover:inline hidden'>
               {topParty.id === undefined ? '' : topParty?.resultText === '패' ? '패' : '승?'}
             </span>
@@ -283,7 +283,7 @@ function Match({
                 </>
             }
           </Team>
-          <Score $won={bottomWon} className='cursor-pointer group' onClick={() => winHandler(bottom.depth, bottom.index, bottom.isThirdMatch)}>
+          <Score $won={bottomWon} className='cursor-pointer group' onClick={() => winHandler(match.id as number, bottom.id as number, isThirdMatch)}>
             <span className='group-hover:inline hidden'>
               {bottom.id === undefined ? '' : bottom.resultText === '패' ? '패' : '승?'}
             </span>
@@ -314,10 +314,10 @@ function Match({
                 </div>
               ) : topParty.id !== undefined ? (
                 <div className='flex flex-row justify-stretch items-stretch w-full font-noto text-sm'>
-                  <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(top.depth, top.index, 3, top.isThirdMatch)}>
+                    <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(match.id as number, 3, isThirdMatch)}>
                     3라운드
                   </div>
-                  <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(top.depth, top.index, 5, top.isThirdMatch)}>
+                    <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(match.id as number, 5, isThirdMatch)}>
                     5라운드
                   </div>
                 </div>
@@ -342,6 +342,7 @@ export function BracketV2({
 }: {
   model: TournamentV2Model;
 }) {
+  console.log({ model, matches: createMatches(model) })
   return (
     <div className='-mt-10 relative w-fit'>
       <SingleEliminationBracket
@@ -361,6 +362,31 @@ export function BracketV2({
           }
         }}
       />
+      {
+        model.options.thirdPlaceEnabled && (
+          <div className={model.teams.length > 8
+            ? 'absolute bottom-56 right-[calc(50%-675px)] translate-x-[50%]'
+            : 'absolute bottom-14 right-[calc(50%-450px)] translate-x-[50%]'}>
+            <SingleEliminationBracket
+              matches={createThirdPlaceMatches(model)}
+              matchComponent={Match}
+              theme={theme}
+              options={{
+                style: {
+                  width: 400,
+                  boxHeight: 120,
+                  connectorColor: '#6c757d',
+                  connectorColorHighlight: '#20c997',
+                  spaceBetweenRows: -10,
+                  roundHeader: {
+                    isShown: false,
+                  },
+                }
+              }}
+            />
+          </div>
+        )
+      }
     </div>
   );
 }

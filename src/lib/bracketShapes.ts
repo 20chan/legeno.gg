@@ -102,7 +102,7 @@ const bracketShapes: { [count: number]: ShapeSkel[] } = {
     { id: 300, depth: 3, match1: 200, match2: 201 },
   ],
   [13]: [
-    { id: 100, depth: 1, team1: 0, team2: 0 },
+    { id: 100, depth: 1, team1: 0, match2: 0 },
     { id: 0, depth: 0, team1: 1, team2: 2 },
     { id: 1, depth: 0, team1: 3, team2: 4 },
     { id: 2, depth: 0, team1: 5, team2: 6 },
@@ -116,7 +116,7 @@ const bracketShapes: { [count: number]: ShapeSkel[] } = {
     { id: 300, depth: 3, match1: 200, match2: 201 },
   ],
   [14]: [
-    { id: 100, depth: 1, team1: 0, team2: 0 },
+    { id: 100, depth: 1, team1: 0, match2: 0 },
     { id: 0, depth: 0, team1: 1, team2: 2 },
     { id: 1, depth: 0, team1: 3, team2: 4 },
     { id: 2, depth: 0, team1: 5, team2: 6 },
@@ -131,7 +131,7 @@ const bracketShapes: { [count: number]: ShapeSkel[] } = {
     { id: 300, depth: 3, match1: 200, match2: 201 },
   ],
   [15]: [
-    { id: 100, depth: 1, team1: 0, team2: 0 },
+    { id: 100, depth: 1, team1: 0, match2: 0 },
     { id: 0, depth: 0, team1: 1, team2: 2 },
     { id: 1, depth: 0, team1: 3, team2: 4 },
     { id: 2, depth: 0, team1: 5, team2: 6 },
@@ -171,6 +171,8 @@ export function createMatchesFromShape(count: number): TournamentV2MatchModel[] 
   if (!shape) {
     return [];
   }
+
+  shape.sort((a, b) => a.id - b.id);
 
   return shape.map(x => {
     const nextMatch = shape.find(y => y.match1 === x.id || y.match2 === x.id);

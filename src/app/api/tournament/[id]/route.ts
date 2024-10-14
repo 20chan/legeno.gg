@@ -1,5 +1,5 @@
 import { authOptions } from '@/lib/auth';
-import { deleteTournament, getTournamentById, updateTournament } from '@/lib/db/tournament';
+import { deleteTournament, getTournamentById, updateTournament } from '@/lib/db/tournament_v2';
 import { getServerSession } from 'next-auth';
 
 const ADMIN_ID = process.env.ADMIN_ID;

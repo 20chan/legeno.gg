@@ -1,5 +1,6 @@
 import type { MatchType, ParticipantType } from "@g-loot/react-tournament-brackets/dist/cjs";
 import { TournamentV2Model, TournamentV2TeamModel } from './db/tournament_v2';
+import { getThirdMatch } from './tournamentHelper_v2';
 
 export type ParticipantExt = ParticipantType & {
   clan: string;
@@ -8,11 +9,12 @@ export type ParticipantExt = ParticipantType & {
 
 export type MatchExt = MatchType & {
   maps: number[];
+  isThirdMatch: boolean;
 }
 
 function createEmptyParticipant(matchId: number, index: number): ParticipantExt {
   return {
-    id: matchId * 2 + index,
+    id: 10000 + matchId * 10 + index,
     name: '',
     clan: '',
     members: [],
@@ -77,8 +79,51 @@ export function createMatches(model: TournamentV2Model): MatchExt[] {
       state: '',
       maps: match.maps,
       participants: participants,
+      isThirdMatch: false,
     });
   }
 
   return matches;
+}
+
+export function createThirdPlaceMatches(model: TournamentV2Model): MatchExt[] {
+  const finalMatch = model.matches.find(x => x.shape.nextMatchId === null)!;
+
+  const thirdMatchTeamIds = getThirdMatch(model);
+
+  const matchEnded = model.options.thirdPlaceWinId !== null;
+  const win0 = model.options.thirdPlaceWinId === thirdMatchTeamIds[0];
+  const win1 = model.options.thirdPlaceWinId === thirdMatchTeamIds[1];
+
+  const participants: ParticipantExt[] = [];
+
+  if (thirdMatchTeamIds[0] === null) {
+    participants.push(createEmptyParticipant(999, 0));
+  } else {
+    participants.push({
+      ...createParticipant(model.teams.find(x => x.id === thirdMatchTeamIds[0])!),
+      isWinner: win0,
+      resultText: !matchEnded ? null : win0 ? '승' : '패',
+    });
+  }
+
+  if (thirdMatchTeamIds[1] === null) {
+    participants.push(createEmptyParticipant(999, 1));
+  } else {
+    participants.push({
+      ...createParticipant(model.teams.find(x => x.id === thirdMatchTeamIds[1])!),
+      isWinner: win1,
+      resultText: !matchEnded ? null : win1 ? '승' : '패',
+    });
+  }
+
+  return [{
+    id: 999,
+    nextMatchId: null,
+    startTime: '',
+    state: '',
+    maps: model.options.thirdPlaceMaps,
+    participants: participants,
+    isThirdMatch: true,
+  }];
 }

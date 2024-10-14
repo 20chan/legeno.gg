@@ -2,6 +2,10 @@ import type { TournamentV2 } from '@prisma/client';
 import { TournamentModel } from './tournament';
 import { createMatchesFromShape } from '../bracketShapes';
 import { createParticipants, getPositionOfCoord } from '../bracket';
+import { prisma } from '../prisma';
+import { getFinalRanks } from '../tournamentHelper';
+
+type CreateAction<T> = T | Omit<T, 'id' | 'createdAt' | 'startDate'>;
 
 export interface TournamentV2Model {
   id: string;
@@ -16,7 +20,7 @@ export interface TournamentV2Model {
 
   options: {
     thirdPlaceEnabled: boolean;
-    thirdPlaceWinIndex: number;
+    thirdPlaceWinId: number | null;
     thirdPlaceMaps: number[];
   };
 }
@@ -54,11 +58,40 @@ export interface TournamentV2MatchModel {
 }
 
 export namespace TournamentV2Model {
+  export function createNew(userId: string, count: number): CreateAction<TournamentV2Model> {
+    return {
+      title: '',
+      userId,
+      teams: new Array(count).fill(0).map((_, i) => ({
+        id: i + 1,
+        clan: '',
+        members: ['', '', ''],
+        name: '',
+      })),
+      matches: createMatchesFromShape(count),
+      options: {
+        thirdPlaceEnabled: true,
+        thirdPlaceWinId: null,
+        thirdPlaceMaps: [],
+      },
+    }
+  }
+
   export function serialize(model: TournamentV2Model): TournamentV2 {
     return {
       id: model.id,
       createdAt: model.createdAt,
       startDate: model.startDate,
+      userId: model.userId,
+      title: model.title,
+      teamsSerialized: JSON.stringify(model.teams),
+      matchesSerialized: JSON.stringify(model.matches),
+      optionsSerialized: JSON.stringify(model.options),
+    };
+  }
+
+  export function serializeCreate(model: CreateAction<TournamentV2Model>): CreateAction<TournamentV2> {
+    return {
       userId: model.userId,
       title: model.title,
       teamsSerialized: JSON.stringify(model.teams),
@@ -110,6 +143,8 @@ export namespace TournamentV2Model {
       match.maps = team0.maps ?? team1.maps ?? [];
     });
 
+    const finalRank = getFinalRanks(model);
+
     return {
       id: model.id,
       createdAt: model.createdAt,
@@ -125,9 +160,57 @@ export namespace TournamentV2Model {
       matches,
       options: {
         thirdPlaceEnabled: model.thirdPlaceEnabled,
-        thirdPlaceWinIndex: model.thirdPlaceWinIndex,
+        thirdPlaceWinId: finalRank[2]?.id ?? null,
         thirdPlaceMaps: model.thirdPlaceMaps,
       },
     };
   }
+}
+
+export async function getTournaments(options: { take?: number }): Promise<TournamentV2Model[]> {
+  const found = await prisma.tournamentV2.findMany({
+    take: options.take,
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+
+  return found.map(TournamentV2Model.deserialize);
+}
+
+export async function getTournamentById(id: string): Promise<TournamentV2Model | null> {
+  const found = await prisma.tournamentV2.findFirst({
+    where: {
+      id,
+    },
+  });
+
+  return found ? TournamentV2Model.deserialize(found) : null;
+}
+
+export async function createTournament(model: CreateAction<TournamentV2Model>): Promise<TournamentV2Model> {
+  const created = await prisma.tournamentV2.create({
+    data: TournamentV2Model.serializeCreate(model),
+  });
+
+  return TournamentV2Model.deserialize(created);
+}
+
+export async function updateTournament(model: TournamentV2Model): Promise<TournamentV2Model> {
+  const updated = await prisma.tournamentV2.update({
+    where: {
+      id: model.id,
+    },
+    data: TournamentV2Model.serialize(model),
+  });
+
+  return TournamentV2Model.deserialize(updated);
+}
+
+export async function deleteTournament(id: string): Promise<void> {
+  await prisma.tournamentV2.delete({
+    where: {
+      id,
+    },
+  });
 }
