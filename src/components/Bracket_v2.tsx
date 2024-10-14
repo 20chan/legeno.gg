@@ -79,7 +79,7 @@ function SLGame({ game: game0, x, y, homeOnTop }: GameComponentProps) {
         {topWinHover ? '승?' : (topWon && !bottomWon) ? '승' : (!topWon && bottomWon) ? '패' : ''}
       </text>
 
-      <text x={width - 28} y='54' className={classNames('font-sl pointer-events-none', !(bottomWon && !topWon) && bottomWinHover && 'fill-white/80', (bottomWon && !topWon) && !bottomWinHover && 'fill-green-400', bottomWinHover && 'fill-half-yellow')}>
+      <text x={width - 28} y='54' className={classNames('font-sl pointer-events-none', !(bottomWon && !topWon) && !bottomWinHover && 'fill-white/80', (bottomWon && !topWon) && !bottomWinHover && 'fill-green-400', bottomWinHover && 'fill-half-yellow')}>
         {bottomWinHover ? '승?' : (bottomWon && !topWon) ? '승' : (!bottomWon && topWon) ? '패' : ''}
       </text>
 

@@ -75,6 +75,8 @@ export function TournamentEditor({
         teams.splice(newTeamLength);
       }
 
+      teams.sort((a, b) => a.id - b.id);
+
       const matches = createMatchesFromShape(newTeamLength);
       const newTournament = {
         ...x,
@@ -307,9 +309,30 @@ export function TournamentEditor({
                       const temp = teams[index + 1];
                       teams[index + 1] = teams[index];
                       teams[index] = temp;
+
+                      const targetTeamId = newTournament.teams[i + 1].id;
+                      const matches = x.matches.slice();
+                      const original = matches.find(y => y.shape.match1TeamId === team.id || y.shape.match2TeamId === team.id);
+                      const target = matches.find(y => y.shape.match1TeamId === targetTeamId || y.shape.match2TeamId === targetTeamId);
+
+                      if (original && target) {
+                        if (original.shape.match1TeamId === team.id) {
+                          original.shape.match1TeamId = targetTeamId;
+                        } else {
+                          original.shape.match2TeamId = targetTeamId;
+                        }
+
+                        if (target.shape.match1TeamId === targetTeamId) {
+                          target.shape.match1TeamId = team.id;
+                        } else {
+                          target.shape.match2TeamId = team.id;
+                        }
+                      }
+
                       return {
                         ...x,
                         teams,
+                        matches,
                       };
                     }
                     )}
