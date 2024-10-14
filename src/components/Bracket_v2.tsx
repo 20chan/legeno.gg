@@ -58,7 +58,6 @@ function SLGame({ game: game0, x, y, homeOnTop }: GameComponentProps) {
   const width = 350;
   return (
     <svg width={width} height='82' viewBox='0 0 350 82' x={x} y={y}>
-
       <rect x='0' y='12' width={width} height='25' fill={topWon ? '#224076ff' : '#22407655'} />
       <rect x='0' y='37' width={width} height='25' fill={bottomWon ? '#602A35ff' : '#602A3555'} />
       <rect x='0' y='62' width={width} height='25' fill='#00000050' />
@@ -76,11 +75,11 @@ function SLGame({ game: game0, x, y, homeOnTop }: GameComponentProps) {
         className='cursor-pointer'
       />
 
-      <text x={width - 28} y='29' className={classNames('font-sl pointer-events-none fill-white/80', (topWon && !bottomWon) && 'fill-green-400', topWinHover && 'fill-half-yellow')}>
+      <text x={width - 28} y='29' className={classNames('font-sl pointer-events-none', !(topWon && !bottomWon) && !topWinHover && 'fill-white/80', (topWon && !bottomWon) && !topWinHover && 'fill-green-400', topWinHover && 'fill-half-yellow')}>
         {topWinHover ? '승?' : (topWon && !bottomWon) ? '승' : (!topWon && bottomWon) ? '패' : ''}
       </text>
 
-      <text x={width - 28} y='54' className={classNames('font-sl pointer-events-none fill-white/80', (bottomWon && !topWon) && 'fill-green-400', bottomWinHover && 'fill-half-yellow')}>
+      <text x={width - 28} y='54' className={classNames('font-sl pointer-events-none', !(bottomWon && !topWon) && bottomWinHover && 'fill-white/80', (bottomWon && !topWon) && !bottomWinHover && 'fill-green-400', bottomWinHover && 'fill-half-yellow')}>
         {bottomWinHover ? '승?' : (bottomWon && !topWon) ? '승' : (!bottomWon && topWon) ? '패' : ''}
       </text>
 
