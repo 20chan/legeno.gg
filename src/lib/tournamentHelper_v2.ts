@@ -30,11 +30,23 @@ export function updateWin(model: TournamentV2Model, input: {
   const team2 = match.shape.match2TeamId ?? prevMatch2?.winner ?? null;
 
   if (team1 === teamId) {
-    match.win = 0;
-    match.loser = team2;
+    if (match.win === 0) {
+      match.win = null;
+      match.winner = null;
+      match.loser = null;
+    } else {
+      match.win = 0;
+      match.loser = team2;
+    }
   } else {
-    match.win = 1;
-    match.loser = team1;
+    if (match.win === 1) {
+      match.win = null;
+      match.winner = null;
+      match.loser = null;
+    } else {
+      match.win = 1;
+      match.loser = team1;
+    }
   }
 
   return {

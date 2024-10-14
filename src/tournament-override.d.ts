@@ -1,4 +1,5 @@
 import 'react-tournament-bracket/lib/components/model';
+import { TournamentV2MatchModel } from './lib/db/tournament_v2';
 
 declare module 'react-tournament-bracket/lib/components/model' {
   interface SideInfoExt {
@@ -31,6 +32,6 @@ declare module 'react-tournament-bracket/lib/components/model' {
     sides: {
       [side in Side]: SideInfoExt;
     };
-    nextMatchId: number | null;
+    match: TournamentV2MatchModel;
   }
 }

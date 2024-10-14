@@ -77,7 +77,7 @@ function createMatchGame(model: TournamentV2Model, matchId: number): GameExt {
       },
     },
     maps: match.maps,
-    nextMatchId: match.shape.nextMatchId,
+    match,
   };
 }
 

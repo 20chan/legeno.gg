@@ -21,50 +21,22 @@ export function TournamentEditor({
 
   const clear = useCallback(() => {
     setNewTournament(x => {
-      const teams = x.teams.map(team => ({
-        ...team,
-        wins: [],
+      const matches = x.matches.map(y => ({
+        ...y,
+        win: null,
+        winner: null,
+        loser: null,
         maps: [],
       }));
 
       return {
         ...x,
-        teams,
-        thirdPlaceWinIndex: -1,
-        thirdPlaceMaps: [],
-      };
-    })
-  }, [setNewTournament]);
-
-  const shuffleMatch = useCallback(() => {
-    setNewTournament(x => {
-      const teams = shuffle(x.teams.map(team => ({
-        ...team,
-        wins: [],
-        maps: [],
-      })));
-
-      return {
-        ...x,
-        teams,
-        thirdPlaceWinIndex: -1,
-        thirdPlaceMaps: [],
-      };
-    })
-  }, [setNewTournament]);
-
-  const sortMatch = useCallback(() => {
-    setNewTournament(x => {
-      const teams = x.teams.slice().sort((a, b) => a.id - b.id).map(team => ({
-        ...team,
-        wins: [],
-        maps: [],
-      }));
-      return {
-        ...x,
-        teams,
-        thirdPlaceWinIndex: -1,
-        thirdPlaceMaps: [],
+        matches,
+        options: {
+          ...x.options,
+          thirdPlaceMaps: [],
+          thirdPlaceWinId: null,
+        }
       };
     })
   }, [setNewTournament]);
@@ -362,14 +334,6 @@ export function TournamentEditor({
 
         <button onClick={clear} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
           승리 결과 / 맵 전부 초기화
-        </button>
-
-        <button onClick={shuffleMatch} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
-          결과 초기화 + 조 순서 랜덤 추첨
-        </button>
-
-        <button onClick={sortMatch} className='py-2 px-4 bg-half-red/50 hover:bg-half-red/70'>
-          결과 초기화 + 조 순서 초기화
         </button>
       </div>
 
