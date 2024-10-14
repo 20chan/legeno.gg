@@ -154,7 +154,7 @@ export default function TournamentPage({ params }: {
       {
         (isEditing && tournament) && (
           <div className='absolute inset-0 z-50 bg-black/80 flex flex-col justify-center items-center'>
-            <div className='bg-half-black w-[80rem] max-w-full h-4/5'>
+            <div className='bg-half-black w-[80rem] max-w-full'>
               <TournamentEditor
                 tournament={tournament}
                 onEdit={setTournament}

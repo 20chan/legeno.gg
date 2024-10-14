@@ -124,7 +124,7 @@ export function TournamentEditor({
   }, [setNewTournament]);
 
   return (
-    <div className='flex flex-col h-full px-4 py-8 gap-y-4'>
+    <div className='flex flex-col min-h-full px-4 py-8 gap-y-4'>
       <div className='text-4xl text-center'>
         토너먼트 수정
       </div>
@@ -135,7 +135,7 @@ export function TournamentEditor({
         </div>
 
         <input
-          className='w-80 py-0.5 bg-half-white/10 focus:outline-none px-2 font-mono text-xl'
+          className='w-80 py-0.5 bg-half-white/10 focus:outline-none px-2 font-sans text-xl'
           value={newTournament.title}
           spellCheck={false}
           onTimeUpdate={e => console.log(e)}
@@ -293,9 +293,30 @@ export function TournamentEditor({
                       const temp = teams[index - 1];
                       teams[index - 1] = teams[index];
                       teams[index] = temp;
+
+                      const targetTeamId = newTournament.teams[i - 1].id;
+                      const matches = x.matches.slice();
+                      const original = matches.find(y => y.shape.match1TeamId === team.id || y.shape.match2TeamId === team.id);
+                      const target = matches.find(y => y.shape.match1TeamId === targetTeamId || y.shape.match2TeamId === targetTeamId);
+
+                      if (original && target) {
+                        if (original.shape.match1TeamId === team.id) {
+                          original.shape.match1TeamId = targetTeamId;
+                        } else {
+                          original.shape.match2TeamId = targetTeamId;
+                        }
+
+                        if (target.shape.match1TeamId === targetTeamId) {
+                          target.shape.match1TeamId = team.id;
+                        } else {
+                          target.shape.match2TeamId = team.id;
+                        }
+                      }
+
                       return {
                         ...x,
                         teams,
+                        matches,
                       };
                     }
                     )}

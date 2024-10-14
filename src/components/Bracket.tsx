@@ -1,6 +1,6 @@
 
-import { ParticipantExt, createMatches, createThirdPlaceMatches } from '@/lib/bracket';
-import { TournamentModel } from '@/lib/db/tournament';
+import { MatchExt, ParticipantExt, createMatches, createThirdPlaceMatches } from '@/lib/bracket_v2';
+import { TournamentV2Model } from '@/lib/db/tournament_v2';
 import { mapInfos } from '@/lib/sl/map';
 import {
   createTheme,
@@ -80,7 +80,7 @@ export const Side = styled.div<SideProps>`
       : $won === 1 ? '#602A35ff' : '#602A3555'
   };
 
-    text-decoration-line: ${({ $won }: any) => $won === false ? 'line-through' : 'none'};
+  text-decoration-line: ${({ $won }: any) => $won === false ? 'line-through' : 'none'};
 
   border-right: 4px solid ${({ theme }) => theme.border.color};
   border-left: 4px solid ${({ theme }) => theme.border.color};
@@ -194,11 +194,9 @@ function Match({
   const top = topParty as ParticipantExt;
   const bottom = bottomParty as ParticipantExt;
 
-  const maps = ((bottomParty as any).maps || (topParty as any).maps) as number[] | null;
+  const { maps, isThirdMatch } = match as MatchExt;
   const mapsByName = maps?.map(x => mapInfos[x - 1]?.name) ?? [];
-
-  // hard coded lol
-  const isLastDepth = (top.depth ?? bottom.depth ?? -1) === 3;
+  const isLastDepth = match.nextMatchId === null;
 
   return (
     <Wrapper>
@@ -234,7 +232,7 @@ function Match({
             {
               top.clan ? (
                 <>
-                  <span className={`inline-block font-sl text-xl -ml-2 w-6 text-center text-half-white/80 ${(!topWon && bottomWon) && 'text-half-white/30'}`}>{top.name}</span>
+                  <span className={`inline-block font-sl text-xl -ml-2 w-6 text-center text-half-white/80 ${(!topWon && bottomWon) && 'text-half-white/30'}`}>{top.id as number}</span>
                   <span className={`inline-block text-start font-clan text-xl ml-2 mr-1 w-14 text-yellow-500 ${(!topWon && bottomWon) && 'text-yellow-500/30'}`}>{top.clan}</span>
                   <span className='font-noto inline-block flex-1'>
                     <div className={`flex flex-row justify-start w-full gap-x-2.5 ${(!topWon && bottomWon) && 'text-half-white/30'}`}>
@@ -249,7 +247,7 @@ function Match({
 
             }
           </Team>
-          <Score $won={topWon} className='cursor-pointer group' onClick={() => winHandler(top.depth, top.index, top.isThirdMatch)}>
+          <Score $won={topWon} className='cursor-pointer group' onClick={() => winHandler(match.id as number, top.id as number, isThirdMatch)}>
             <span className='group-hover:inline hidden'>
               {topParty.id === undefined ? '' : topParty?.resultText === '패' ? '패' : '승?'}
             </span>
@@ -271,7 +269,7 @@ function Match({
             {
               bottom.clan ? (
                 <>
-                  <span className={`inline-block font-sl text-xl -ml-2 w-6 text-center text-half-white/80 ${(!bottomWon && topWon) && 'text-half-white/30'}`}>{bottom.name}</span>
+                  <span className={`inline-block font-sl text-xl -ml-2 w-6 text-center text-half-white/80 ${(!bottomWon && topWon) && 'text-half-white/30'}`}>{bottom.id as number}</span>
                   <span className={`inline-block text-start font-clan text-xl ml-2 mr-1 w-14 text-yellow-500 ${(!bottomWon && topWon) && 'text-yellow-500/30'}`}>{bottom.clan}</span>
                   <span className='font-noto inline-block flex-1'>
                     <div className={`flex flex-row justify-start w-full gap-x-2.5 ${(!bottomWon && topWon) && 'text-half-white/30'}`}>
@@ -285,7 +283,7 @@ function Match({
                 </>
             }
           </Team>
-          <Score $won={bottomWon} className='cursor-pointer group' onClick={() => winHandler(bottom.depth, bottom.index, bottom.isThirdMatch)}>
+          <Score $won={bottomWon} className='cursor-pointer group' onClick={() => winHandler(match.id as number, bottom.id as number, isThirdMatch)}>
             <span className='group-hover:inline hidden'>
               {bottom.id === undefined ? '' : bottom.resultText === '패' ? '패' : '승?'}
             </span>
@@ -316,10 +314,10 @@ function Match({
                 </div>
               ) : topParty.id !== undefined ? (
                 <div className='flex flex-row justify-stretch items-stretch w-full font-noto text-sm'>
-                  <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(top.depth, top.index, 3, top.isThirdMatch)}>
+                    <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(match.id as number, 3, isThirdMatch)}>
                     3라운드
                   </div>
-                  <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(top.depth, top.index, 5, top.isThirdMatch)}>
+                    <div className='flex-1 text-center cursor-pointer hover:text-half-yellow' onClick={() => mapHandler(match.id as number, 5, isThirdMatch)}>
                     5라운드
                   </div>
                 </div>
@@ -339,11 +337,11 @@ const theme = createTheme({
   textColor: { main: 'var(--yellow)', highlighted: '#20c997', dark: 'var(--light)' },
 });
 
-export function Bracket({
+export function BracketV2({
   model,
 }: {
-  model: TournamentModel;
-  }) {
+  model: TournamentV2Model;
+}) {
   return (
     <div className='-mt-10 relative w-fit'>
       <SingleEliminationBracket
@@ -364,8 +362,8 @@ export function Bracket({
         }}
       />
       {
-        model.thirdPlaceEnabled && (
-          <div className={model.teams.length === 16
+        model.options.thirdPlaceEnabled && (
+          <div className={model.teams.length > 8
             ? 'absolute bottom-56 right-[calc(50%-675px)] translate-x-[50%]'
             : 'absolute bottom-14 right-[calc(50%-450px)] translate-x-[50%]'}>
             <SingleEliminationBracket
