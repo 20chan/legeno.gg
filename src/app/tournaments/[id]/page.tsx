@@ -45,7 +45,6 @@ export default function TournamentPage({ params }: {
     }
 
     socket.on(`tournament:${id}`, (data: { tournament: TournamentV2Model }) => {
-      console.log('socket', data.tournament.id);
       if (isOwner) {
         return;
       }
@@ -60,7 +59,7 @@ export default function TournamentPage({ params }: {
 
   useEffect(() => {
     (async () => {
-      if (!tournament || !session?.user) {
+      if (!tournament || !session?.user || !isOwner) {
         return;
       }
 
@@ -72,7 +71,7 @@ export default function TournamentPage({ params }: {
         body: JSON.stringify({ tournament }),
       });
     })();
-  }, [id, session?.user, tournament]);
+  }, [id, session?.user, isOwner, tournament]);
 
   const winHandler = useCallback((matchId: number, teamId: number, isThirdMatch: boolean) => {
     setTournament(x => {
