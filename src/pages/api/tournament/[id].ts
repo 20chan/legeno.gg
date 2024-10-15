@@ -1,92 +1,109 @@
 import { authOptions } from '@/lib/auth';
 import { deleteTournament, getTournamentById, updateTournament } from '@/lib/db/tournament_v2';
+import { NextApiRequest, NextApiResponseIO } from 'next';
 import { getServerSession } from 'next-auth';
 
 const ADMIN_ID = process.env.ADMIN_ID;
 
-export async function GET(
-  request: Request,
+export default async function handler(req: NextApiRequest, resp: NextApiResponseIO) {
+  const params = { id: req.query.id as string };
+  if (req.method === 'GET') {
+    return GET(req, resp, { params });
+  } else if (req.method === 'PATCH') {
+    return PATCH(req, resp, { params });
+  } else if (req.method === 'DELETE') {
+    return DELETE(req, resp, { params });
+  }
+}
+
+async function GET(
+  req: NextApiRequest,
+  resp: NextApiResponseIO,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
 
   const tournament = await getTournamentById(id);
   if (!tournament) {
-    return Response.json({
+    return resp.status(404).json({
       ok: false,
-    }, { status: 404 });
+    });
   }
 
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(req, resp, authOptions);
   const userId = (session?.user as any)?.id;
   const isOwner = userId === ADMIN_ID || userId === tournament.userId;
 
-  return Response.json({
+  return resp.status(200).json({
     ok: true,
     isOwner,
     tournament,
   });
 }
 
-export async function PATCH(
-  request: Request,
+async function PATCH(
+  req: NextApiRequest,
+  resp: NextApiResponseIO,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const { tournament: input } = await request.json();
-  const session = await getServerSession(authOptions);
+  const { tournament: input } = req.body;
+
+  const session = await getServerSession(req, resp, authOptions);
   if (!session?.user) {
-    return Response.json({
+    return resp.status(401).json({
       ok: false,
-    }, { status: 401 });
+    });
   }
 
   const tournament = await getTournamentById(id);
   if (!tournament) {
-    return Response.json({
+    return resp.status(401).json({
       ok: false,
-    }, { status: 404 });
+    });
   }
 
   const userId = (session.user as any).id as string;
   if (userId !== ADMIN_ID && userId !== tournament.userId) {
-    return Response.json({
+    return resp.status(401).json({
       ok: false,
-    }, { status: 401 });
+    });
   }
 
   const result = await updateTournament(input);
+  resp.socket.server.io.emit(`tournament:${id}`, { tournament: result });
 
-  return Response.json({
+  return resp.status(200).json({
     ok: true,
     tournament: result,
   });
 }
 
-export async function DELETE(
-  request: Request,
+async function DELETE(
+  req: NextApiRequest,
+  resp: NextApiResponseIO,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(req, resp, authOptions);
   if (!session?.user) {
-    return Response.json({
+    return resp.status(401).json({
       ok: false,
-    }, { status: 401 });
+    });
   }
 
   const tournament = await getTournamentById(id);
   if (!tournament) {
-    return Response.json({
+    return resp.status(401).json({
       ok: false,
-    }, { status: 404 });
+    });
   }
 
   const userId = (session.user as any).id as string;
   if (userId !== ADMIN_ID && userId !== tournament.userId) {
-    return Response.json({
+    return resp.status(401).json({
       ok: false,
-    }, { status: 401 });
+    });
   }
 
   await deleteTournament(id);

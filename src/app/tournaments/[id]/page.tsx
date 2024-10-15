@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { TournamentEditor } from './TournamentEditor';
 import { BracketV2 } from '@/components/Bracket_v2';
+import { useSocket } from '@/components/SocketProvider';
 
 export default function TournamentPage({ params }: {
   params: { id: string },
@@ -22,6 +23,8 @@ export default function TournamentPage({ params }: {
   const [isShowResult, setIsShowResult] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  const { socket } = useSocket();
 
   useEffect(() => {
     (async () => {
@@ -37,6 +40,25 @@ export default function TournamentPage({ params }: {
   }, [router, id]);
 
   useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    socket.on(`tournament:${id}`, (data: { tournament: TournamentV2Model }) => {
+      console.log('socket', data.tournament.id);
+      if (isOwner) {
+        return;
+      }
+
+      setTournament(data.tournament);
+    });
+
+    return () => {
+      socket.off(`tournament:${id}`);
+    };
+  }, [id, isOwner, socket]);
+
+  useEffect(() => {
     (async () => {
       if (!tournament || !session?.user) {
         return;
@@ -44,6 +66,9 @@ export default function TournamentPage({ params }: {
 
       await fetch(`/api/tournament/${id}`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ tournament }),
       });
     })();
