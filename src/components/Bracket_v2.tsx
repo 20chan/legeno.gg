@@ -12,7 +12,11 @@ import { mapInfos } from '@/lib/sl/map';
 
 const RectClipped = RectClipped0 as any;
 
-function SLGame({ game: game0, x, y, homeOnTop }: GameComponentProps) {
+interface SLGameComponentProps extends GameComponentProps {
+  customViewBox?: string;
+}
+
+export function SLGame({ game: game0, x, y, customViewBox }: SLGameComponentProps) {
   const game = game0 as GameExt;
 
   const { mapHandler, winHandler } = useTournamentContext();
@@ -57,7 +61,7 @@ function SLGame({ game: game0, x, y, homeOnTop }: GameComponentProps) {
 
   const width = 350;
   return (
-    <svg width={width} height='82' viewBox='0 0 350 82' x={x} y={y}>
+    <svg width={width} height='82' viewBox={customViewBox ?? '0 0 350 82'} x={x} y={y}>
       <rect x='0' y='12' width={width} height='25' fill={topWon ? '#224076ff' : '#22407655'} />
       <rect x='0' y='37' width={width} height='25' fill={bottomWon ? '#602A35ff' : '#602A3555'} />
       <rect x='0' y='62' width={width} height='25' fill='#00000050' />

@@ -1,7 +1,7 @@
 import { Game, GameExt } from 'react-tournament-bracket/lib/components/model';
 import { TournamentV2Model } from './db/tournament_v2';
 
-function createMatchGame(model: TournamentV2Model, matchId: number): GameExt {
+export function createMatchGame(model: TournamentV2Model, matchId: number): GameExt {
   const match = model.matches.find(x => x.id === matchId)!;
 
   const getTeam1 = () => {
