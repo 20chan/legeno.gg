@@ -2,7 +2,7 @@
 
 import { TournamentContext } from '@/components/TournamentProvider';
 import type { TournamentV2Model } from '@/lib/db/tournament_v2';
-import { getFinalRanks, updateMap, updateWin } from '@/lib/tournamentHelper_v2';
+import { getFinalRanks, updateFirstPick, updateMap, updateWin } from '@/lib/tournamentHelper_v2';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -91,6 +91,16 @@ export default function TournamentPage({ params }: {
     })
   }, [session?.user, setTournament]);
 
+  const pickHandler = useCallback((matchId: number, isThirdMatch: boolean) => {
+    setTournament(x => {
+      if (!x || !session?.user) {
+        return x;
+      }
+
+      return updateFirstPick(x, { matchId, isThirdMatch });
+    });
+  }, [session?.user, setTournament]);
+
   const finalRanks = useMemo(() => {
     return tournament ? getFinalRanks(tournament) : [];
   }, [tournament]);
@@ -110,6 +120,7 @@ export default function TournamentPage({ params }: {
         <TournamentContext.Provider value={{
           mapHandler,
           winHandler,
+          pickHandler,
         }}>
           {
             tournament && (

@@ -93,6 +93,7 @@ export function createThirdPlaceGame(model: TournamentV2Model): GameExt {
 
   const {
     thirdPlaceMaps,
+    thirdPlaceFirstPick,
     thirdPlaceWinId,
   } = model.options;
 
@@ -115,6 +116,7 @@ export function createThirdPlaceGame(model: TournamentV2Model): GameExt {
     winner: thirdPlaceWinId,
     loser: thirdPlaceWinId === null ? null : thirdPlaceWinId === thirdMatchTeamIds[0] ? thirdMatchTeamIds[1] : thirdMatchTeamIds[0],
     maps: thirdPlaceMaps,
+    firstPick: thirdPlaceFirstPick,
   }
 
   return {

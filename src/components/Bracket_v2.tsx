@@ -23,19 +23,20 @@ interface SLGameComponentProps extends GameComponentProps {
 export function SLGame({ game: game0, x, y, customViewBox, bottomText, isThirdMatch }: SLGameComponentProps) {
   const game = game0 as GameExt;
 
-  const { mapHandler, winHandler } = useTournamentContext();
+  const { mapHandler, winHandler, pickHandler } = useTournamentContext();
 
   const [topWinHover, setTopWinHover] = React.useState(false);
   const [bottomWinHover, setBottomWinHover] = React.useState(false);
 
-  const [topMapHover, setTopMapHover] = React.useState(false);
-  const [bottomMapHover, setBottomMapHover] = React.useState(false);
+  const [firstHover, setFirstHover] = React.useState(false);
 
   const {
     maps,
     sides,
     match,
   } = game;
+
+  const { firstPick } = match;
 
   const top = sides.home;
   const bottom = sides.visitor;
@@ -64,12 +65,20 @@ export function SLGame({ game: game0, x, y, customViewBox, bottomText, isThirdMa
   };
 
   const width = 350;
+  const xOffset = 10;
+
   return (
     <>
       <svg width={width} height='82' viewBox={customViewBox ?? '0 0 350 82'} x={x} y={y}>
-        <rect x='0' y='12' width={width} height='25' fill={topWon ? '#224076ff' : '#22407655'} />
-        <rect x='0' y='37' width={width} height='25' fill={bottomWon ? '#602A35ff' : '#602A3555'} />
-        <rect x='0' y='62' width={width} height='25' fill='#00000050' />
+        <rect x={xOffset} y='12' width={width - xOffset} height='25' fill={topWon ? '#224076ff' : '#22407655'} />
+        <rect x={xOffset} y='37' width={width - xOffset} height='25' fill={bottomWon ? '#602A35ff' : '#602A3555'} />
+        <rect x={xOffset} y='62' width={width - xOffset} height='25' fill='#00000050' />
+
+        <rect x='0' y='12' width={xOffset} height='75' className={classNames('cursor-pointer', {
+          'fill-white/70 hover:fill-white/40': firstPick === null,
+          'fill-[#22407655] hover:fill-[#22407630]': firstPick === 0,
+          'fill-[#602A3555] hover:fill-[#602A3520]': firstPick === 1,
+        })} onClick={() => pickHandler(match.id, isThirdMatch ?? false)} />
 
         <rect x={width - 40} y='12' width='40' height='25' fill='#10131c'
           onPointerEnter={() => setTopWinHover(true)}
@@ -94,26 +103,26 @@ export function SLGame({ game: game0, x, y, customViewBox, bottomText, isThirdMa
 
         {
           top ? (
-            <Side x={0} y={12} side={top} lost={!topWon && bottomWon} />
+            <Side x={xOffset} y={12} side={top} lost={!topWon && bottomWon} />
           ) : null
         }
 
         {
           bottom ? (
-            <Side x={0} y={37} side={bottom} lost={!bottomWon && topWon} />
+            <Side x={xOffset} y={37} side={bottom} lost={!bottomWon && topWon} />
           ) : null
         }
 
         {
           maps.length === 0 ? (
             <>
-              <text x={width / 4} y='76' textAnchor='middle' width={width / 2} height='20'
+              <text x={width / 4 + xOffset} y='76' textAnchor='middle' width={width / 2} height='20'
                 className='font-noto text-xs fill-white hover:fill-half-yellow cursor-pointer'
                 onClick={() => mapHandler(match.id, 3, isThirdMatch ?? false)}
               >
                 3라운드
               </text>
-              <text x={width * 3 / 4} y='76' textAnchor='middle' width={width / 2} height='20'
+              <text x={width * 3 / 4 + xOffset} y='76' textAnchor='middle' width={width / 2} height='20'
                 className='font-noto text-xs fill-white hover:fill-half-yellow cursor-pointer'
                 onClick={() => mapHandler(match.id, 5, isThirdMatch ?? false)}
               >
@@ -121,7 +130,7 @@ export function SLGame({ game: game0, x, y, customViewBox, bottomText, isThirdMa
               </text>
             </>
           ) : (
-            <foreignObject x='0' y='62' width={width} height='20'>
+              <foreignObject x={xOffset} y='62' width={width} height='20'>
               <div className='relative flex-1'>
                 <div className='absolute inset-0 flex flex-row justify-stretch items-stretch overflow-clip'>
                   {maps && maps.map(x => (
@@ -144,12 +153,12 @@ export function SLGame({ game: game0, x, y, customViewBox, bottomText, isThirdMa
 
         {
           (topWon || bottomWon) && !isLastMatch && (
-            <rect x='0' y='12' width={width} height='75' className='fill-black/50 z-30 pointer-events-none' />
+            <rect x={xOffset} y='12' width={width} height='75' className='fill-black/50 z-30 pointer-events-none' />
           )
         }
       </svg>
 
-      <foreignObject x={x} y={y + 81} width={width} height='20'>
+      <foreignObject x={x + xOffset} y={y + 81} width={width} height='20'>
         <div className='w-[350px] text-center text-sm text-white/60 mt-1'>
           {isLastMatch && (bottomText ?? '결승')}
         </div>
@@ -173,7 +182,7 @@ export function BracketV2({
   }
 
   return (
-    <div className='relative w-fit'>
+    <div className='relative'>
       <Bracket game={game} GameComponent={SLGame} gameDimensions={gameDimensions} />
 
       {
@@ -189,7 +198,7 @@ export function BracketV2({
               x={0}
               y={0}
               homeOnTop={true}
-              bottomText='3/4위 결정전'
+              bottomText='3위 결정전'
               isThirdMatch
             />
           </div>

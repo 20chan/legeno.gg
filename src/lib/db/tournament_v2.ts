@@ -21,6 +21,7 @@ export interface TournamentV2Model {
   options: {
     thirdPlaceEnabled: boolean;
     thirdPlaceWinId: number | null;
+    thirdPlaceFirstPick: number | null;
     thirdPlaceMaps: number[];
   };
 }
@@ -51,6 +52,7 @@ export interface TournamentV2MatchModel {
     nextMatchIndex: number | null;
   }
 
+  firstPick: number | null;
   maps: number[];
   win: number | null;
   winner: number | null;
@@ -71,6 +73,7 @@ export namespace TournamentV2Model {
       matches: createMatchesFromShape(count),
       options: {
         thirdPlaceEnabled: true,
+        thirdPlaceFirstPick: null,
         thirdPlaceWinId: null,
         thirdPlaceMaps: [],
       },
@@ -101,6 +104,18 @@ export namespace TournamentV2Model {
   }
 
   export function deserialize(model: TournamentV2): TournamentV2Model {
+    const options = JSON.parse(model.optionsSerialized);
+    if (options.thirdPlaceFirstPick === undefined) {
+      options.thirdPlaceFirstPick = null;
+    }
+
+    const matches = JSON.parse(model.matchesSerialized) as TournamentV2MatchModel[];
+    matches.forEach(match => {
+      if (match.firstPick === undefined) {
+        match.firstPick = null;
+      }
+    });
+
     return {
       id: model.id,
       createdAt: model.createdAt,
@@ -108,8 +123,8 @@ export namespace TournamentV2Model {
       userId: model.userId,
       title: model.title,
       teams: JSON.parse(model.teamsSerialized),
-      matches: JSON.parse(model.matchesSerialized),
-      options: JSON.parse(model.optionsSerialized),
+      matches,
+      options,
     };
   }
 
@@ -161,6 +176,7 @@ export namespace TournamentV2Model {
       options: {
         thirdPlaceEnabled: model.thirdPlaceEnabled,
         thirdPlaceWinId: finalRank[2]?.id ?? null,
+        thirdPlaceFirstPick: null,
         thirdPlaceMaps: model.thirdPlaceMaps,
       },
     };

@@ -83,6 +83,36 @@ export function updateMap(model: TournamentV2Model, input: {
   };
 }
 
+export function updateFirstPick(model: TournamentV2Model, input: {
+  matchId: number;
+  isThirdMatch: boolean;
+}): TournamentV2Model {
+  const { matchId, isThirdMatch } = input;
+
+  if (isThirdMatch) {
+    return {
+      ...model,
+      options: {
+        ...model.options,
+        thirdPlaceFirstPick: Math.random() < 0.5 ? 0 : 1,
+      },
+    };
+  }
+
+  const matches = model.matches.slice();
+  const match = matches.find(x => x.id === matchId)!;
+  if (match.firstPick !== null) {
+    match.firstPick = null;
+  } else {
+    match.firstPick = Math.random() < 0.5 ? 0 : 1;
+  }
+
+  return {
+    ...model,
+    matches,
+  };
+}
+
 export function getThirdMatch(model: TournamentV2Model) {
   const finalMatch = model.matches.find(x => x.shape.nextMatchId === null)!;
 

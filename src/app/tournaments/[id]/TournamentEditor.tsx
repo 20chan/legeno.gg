@@ -26,6 +26,7 @@ export function TournamentEditor({
         win: null,
         winner: null,
         loser: null,
+        firstPick: null,
         maps: [],
       }));
 
@@ -36,6 +37,7 @@ export function TournamentEditor({
           ...x.options,
           thirdPlaceMaps: [],
           thirdPlaceWinId: null,
+          thirdPlaceFirstPick: null,
         }
       };
     })
