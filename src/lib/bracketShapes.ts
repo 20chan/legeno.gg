@@ -197,6 +197,7 @@ export function createMatchesFromShape(count: number): TournamentV2MatchModel[] 
       win: null,
       winner: null,
       loser: null,
+      firstPick: null,
     };
 
     return match;
