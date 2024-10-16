@@ -72,6 +72,7 @@ export default function TournamentPage({ params }: {
 
   const winHandler = () => { };
   const mapHandler = () => { };
+  const pickHandler = () => { };
 
   return (
     <main className=''>
@@ -79,6 +80,7 @@ export default function TournamentPage({ params }: {
         <TournamentContext.Provider value={{
           mapHandler,
           winHandler,
+          pickHandler,
         }}>
           {
             currentGame && (
