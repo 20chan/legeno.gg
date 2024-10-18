@@ -19,7 +19,7 @@ export default function TournamentPage({ params }: {
 }) {
   const { id } = params;
 
-  const [tournament, setTournament] = useState<TournamentV2Model | null>(null);
+  const [tournament, setTournament] = useState<TournamentV2Model & { modified: boolean } | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isShowResult, setIsShowResult] = useState(false);
@@ -60,7 +60,10 @@ export default function TournamentPage({ params }: {
         }
       }
 
-      setTournament(data.tournament);
+      setTournament({
+        ...data.tournament,
+        modified: false,
+      });
     });
 
     return () => {
@@ -71,6 +74,9 @@ export default function TournamentPage({ params }: {
   useEffect(() => {
     (async () => {
       if (!tournament || !session?.user || !isOwner) {
+        return;
+      }
+      if (!tournament.modified) {
         return;
       }
 
@@ -89,7 +95,10 @@ export default function TournamentPage({ params }: {
       if (!x || !session?.user) {
         return x;
       }
-      return updateWin(x, { matchId, teamId, isThirdMatch })
+      return {
+        ...updateWin(x, { matchId, teamId, isThirdMatch }),
+        modified: true,
+      };
     });
   }, [session?.user, setTournament]);
 
@@ -98,7 +107,10 @@ export default function TournamentPage({ params }: {
       if (!x || !session?.user) {
         return x;
       }
-      return updateMap(x, { matchId, count, isThirdMatch })
+      return {
+        ...updateMap(x, { matchId, count, isThirdMatch }),
+        modified: true,
+      };
     })
   }, [session?.user, setTournament]);
 
@@ -108,9 +120,19 @@ export default function TournamentPage({ params }: {
         return x;
       }
 
-      return updateFirstPick(x, { matchId, isThirdMatch });
+      return {
+        ...updateFirstPick(x, { matchId, isThirdMatch }),
+        modified: true,
+      };
     });
   }, [session?.user, setTournament]);
+
+  const tournamentOnEdit = useCallback((tournament: TournamentV2Model) => {
+    setTournament({
+      ...tournament,
+      modified: true,
+    });
+  }, [setTournament]);
 
   const finalRanks = useMemo(() => {
     return tournament ? getFinalRanks(tournament) : [];
@@ -201,7 +223,7 @@ export default function TournamentPage({ params }: {
             <div className='bg-half-black w-[80rem] max-w-full'>
               <TournamentEditor
                 tournament={tournament}
-                onEdit={setTournament}
+                onEdit={tournamentOnEdit}
                 onClose={() => setIsEditing(false)}
                 router={router}
               />
