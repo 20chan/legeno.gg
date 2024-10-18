@@ -11,6 +11,8 @@ import Link from 'next/link';
 import { TournamentEditor } from './TournamentEditor';
 import { BracketV2 } from '@/components/Bracket_v2';
 import { useSocket } from '@/components/SocketProvider';
+import Image from 'next/image';
+import { tierInfos } from '@/lib/sl/tier';
 
 export default function TournamentPage({ params }: {
   params: { id: string },
@@ -49,13 +51,22 @@ export default function TournamentPage({ params }: {
         return;
       }
 
+      if (tournament) {
+        const currentRanks = getFinalRanks(tournament!);
+        const newRanks = getFinalRanks(data.tournament);
+
+        if (currentRanks.length < 4 && newRanks.length === 4) {
+          setIsShowResult(true);
+        }
+      }
+
       setTournament(data.tournament);
     });
 
     return () => {
       socket.off(`tournament:${id}`);
     };
-  }, [id, isOwner, socket]);
+  }, [id, isOwner, tournament, socket]);
 
   useEffect(() => {
     (async () => {
@@ -139,32 +150,30 @@ export default function TournamentPage({ params }: {
 
             {
               isShowResult && (
-                <div className='bg-half-black border-half-red/70 border-2 p-4 sm:text-2xl'>
+                <div className='bg-half-black border-half-red/70 border-2 px-10 py-4 sm:text-2xl gap-4'>
                   {
                     finalRanks.map(x => {
                       const team = tournament.teams.find(y => y.id === x.id)!;
                       return (
-                        <div key={x.id}>
-                          <span className={classNames('font-mono mr-1 w-16 inline-block', {
-                            'font-bold text-yellow-500': x.rank === 1,
-                            'font-bold text-[silver]': x.rank === 2,
-                            'font-bold text-amber-600': x.rank === 3,
-                            'text-half-white/60': x.rank === 4,
-                          })}>
-                            {x.rank}등:
-                          </span>
-                          <span className='font-clan mr-3 text-yellow-500 sm:w-[4rem] inline-block text-right'>
-                            {team.clan}
+                        <div key={x.id} className='flex flex-row gap-2'>
+                          <span className={classNames('font-noto mr-1 w-16 inline-block')}>
+                            <Image alt="" src={tierInfos[x.rank - 1]} width={64} height={64} />
                           </span>
 
-                          <span className={classNames({
-                            'place-gold': x.rank === 1,
-                            'place-silver': x.rank === 2,
-                            'text-amber-600': x.rank === 3,
-                            'text-half-white/60': x.rank === 4,
-                          })}>
-                            {team.members.join(' ')}
-                          </span>
+                          <div className='flex flex-col'>
+                            <div className='font-clan text-yellow-500 inline-block'>
+                            {team.clan}
+                            </div>
+
+                            <div className={classNames('font-noto -mt-2 flex flex-row gap-2', {
+                              'place-gold': x.rank === 1,
+                              'place-silver': x.rank === 2,
+                              'text-amber-600': x.rank === 3,
+                              'text-half-white/60': x.rank === 4,
+                            })}>
+                              {team.members.map(y => <span key={y}>{y}</span>)}
+                            </div>
+                          </div>
                         </div>
                       )
                     })
