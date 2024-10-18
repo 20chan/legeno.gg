@@ -47,10 +47,6 @@ export default function TournamentPage({ params }: {
     }
 
     socket.on(`tournament:${id}`, (data: { tournament: TournamentV2Model }) => {
-      if (isOwner) {
-        return;
-      }
-
       if (tournament) {
         const currentRanks = getFinalRanks(tournament!);
         const newRanks = getFinalRanks(data.tournament);
