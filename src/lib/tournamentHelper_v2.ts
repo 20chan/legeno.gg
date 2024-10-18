@@ -144,8 +144,12 @@ export function getFinalRanks(model: TournamentV2Model): Array<{ id: number, ran
 
   const finalMatch = matches.find(x => x.shape.nextMatchId === null)!;
 
-  const winner = teams.find(x => x.id === finalMatch.winner)!;
-  const loser = teams.find(x => x.id === finalMatch.loser)!;
+  const winner = teams.find(x => x.id === finalMatch.winner);
+  const loser = teams.find(x => x.id === finalMatch.loser);
+
+  if (!winner || !loser) {
+    return [];
+  }
 
   const result = finalMatch.winner === null ? [] : [
     { id: winner.id, rank: 1 },

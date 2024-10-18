@@ -34,6 +34,7 @@ export function createMatchGame(model: TournamentV2Model, matchId: number): Game
     return null;
   };
 
+
   const team1 = model.teams.find(x => x.id === getTeam1());
   const team2 = model.teams.find(x => x.id === getTeam2());
 
