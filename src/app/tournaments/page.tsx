@@ -44,7 +44,7 @@ export default async function Page() {
         {tournaments.map(tournament => {
           const ts = new Date(tournament.startDate);
           const isStarted = formatDate(new Date()) === formatDate(ts);
-          const isEnded = ts.getTime() < Date.now();
+          const isEnded = tournament.matches.every(x => x.winner !== null);
 
           return (
             <Link key={tournament.id} href={`/tournaments/${tournament.id}`} className={`py-4 px-4 ${isEnded ? 'bg-half-green/70 hover:bg-half-green/50' : 'bg-half-blue/70 hover:bg-half-blue/50'}
