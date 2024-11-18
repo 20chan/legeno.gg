@@ -10,4 +10,5 @@ Online tournament bracket platform for game SMASH LEGENDS
 
 - [x] Interactive live bracket
   - [x] Pick random maps
-- [ ] Live updates using websockets
+- [x] Live updates using websockets
+- [x] Live widget for streaming overlay
