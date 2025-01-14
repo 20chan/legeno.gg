@@ -50,6 +50,7 @@ model TournamentV2 {
 
   userId String
   title String
+  host String @default("")
   optionsSerialized String
 
   teamsSerialized String
