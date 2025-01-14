@@ -3,6 +3,7 @@ import { shuffle } from '@/lib/utils/shuffle';
 import { useCallback, useMemo, useState } from 'react';
 import type { useRouter } from 'next/navigation'
 import { createMatchesFromShape } from '@/lib/bracketShapes';
+import { mapInfos } from '@/lib/sl/map';
 
 export function TournamentEditor({
   tournament,
@@ -98,6 +99,28 @@ export function TournamentEditor({
       };
     });
   }, [setNewTournament]);
+
+  const setDisallowedMaps = useCallback((id: number, allowed: boolean) => {
+    setNewTournament(x => {
+      const disallowedmaps = x.options.disallowedmaps.slice();
+      if (allowed) {
+        const index = disallowedmaps.indexOf(id);
+        if (index !== -1) {
+          disallowedmaps.splice(index, 1);
+        }
+      } else {
+        disallowedmaps.push(id);
+      }
+
+      return {
+        ...x,
+        options: {
+          ...x.options,
+          disallowedmaps,
+        },
+      };
+    });
+  }, []);
 
   return (
     <div className='flex flex-col min-h-full px-4 py-8 gap-y-4'>
@@ -349,6 +372,28 @@ export function TournamentEditor({
               ))
             }
           </div>
+        </div>
+      </div>
+
+      <div className='flex flex-row gap-x-4'>
+        <div className='w-20 mr-2'>
+          맵 설정:
+        </div>
+
+        <div className='flex flex-row gap-x-4'>
+          {mapInfos.map(x => (
+            <div key={x.id} className='flex flex-row gap-x-4'>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={!newTournament.options.disallowedmaps.includes(x.id)}
+                  onChange={e => setDisallowedMaps(x.id, e.target.checked)}
+                  className='mr-2'
+                />
+                {x.name}
+              </label>
+            </div>
+          ))}
         </div>
       </div>
 

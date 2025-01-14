@@ -62,7 +62,8 @@ export function updateMap(model: TournamentV2Model, input: {
 }): TournamentV2Model {
   const { matchId, count, isThirdMatch } = input;
 
-  const maps = shuffle([...mapInfos]).slice(0, count).map(x => x.id);
+  const mapPool = mapInfos.filter(x => !model.options.disallowedmaps.includes(x.id));
+  const maps = shuffle([...mapPool]).slice(0, count).map(x => x.id);
   if (isThirdMatch) {
     return {
       ...model,

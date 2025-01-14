@@ -2,6 +2,7 @@ import { Contact } from '@/components/Contact';
 import { SignIn } from '@/components/SignIn';
 import { authOptions } from '@/lib/auth';
 import { TournamentV2Model, createTournament, getTournaments } from '@/lib/db/tournament_v2';
+import classNames from 'classnames';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -44,11 +45,17 @@ export default async function Page() {
         {tournaments.map(tournament => {
           const ts = new Date(tournament.startDate);
           const isStarted = formatDate(new Date()) === formatDate(ts);
+          const isCancled = formatDate(new Date(Date.now() + 24 * 3600 * 1000)) >= formatDate(ts);
           const isEnded = tournament.matches.every(x => x.winner !== null);
 
           return (
-            <Link key={tournament.id} href={`/tournaments/${tournament.id}`} className={`py-4 px-4 ${isEnded ? 'bg-half-green/70 hover:bg-half-green/50' : 'bg-half-blue/70 hover:bg-half-blue/50'}
-            `}>
+            <Link key={tournament.id} href={`/tournaments/${tournament.id}`}
+              className={classNames('py-4 px-4', {
+                'bg-half-green/70 hover:bg-half-green/50': isEnded,
+                'bg-half-green/50 hover:bg-half-green/30': !isEnded && isCancled,
+                'bg-half-blue/70 hover:bg-half-blue/50': !isEnded && !isCancled,
+              })}
+            >
               <div className='text-2xl font-sans font-bold'>
                 {tournament.title}
               </div>
@@ -57,7 +64,7 @@ export default async function Page() {
                 {formatDate(ts)}
 
                 <span>
-                  {' '}({isEnded ? '종료' : isStarted ? '진행중' : '예정'})
+                  {' '}({isEnded ? '종료' : isCancled ? '취소' : isStarted ? '진행중' : '예정'})
                 </span>
               </div>
             </Link>
@@ -96,7 +103,7 @@ export default async function Page() {
         )
       }
 
-      <div className='absolute bottom-14'>
+      <div className='fixed bottom-14'>
         <Contact />
       </div>
     </main>

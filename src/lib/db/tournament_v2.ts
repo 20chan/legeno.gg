@@ -23,6 +23,7 @@ export interface TournamentV2Model {
     thirdPlaceWinId: number | null;
     thirdPlaceFirstPick: number | null;
     thirdPlaceMaps: number[];
+    disallowedmaps: number[];
   };
 }
 
@@ -76,6 +77,7 @@ export namespace TournamentV2Model {
         thirdPlaceFirstPick: null,
         thirdPlaceWinId: null,
         thirdPlaceMaps: [],
+        disallowedmaps: [],
       },
     }
   }
@@ -90,6 +92,7 @@ export namespace TournamentV2Model {
       teamsSerialized: JSON.stringify(model.teams),
       matchesSerialized: JSON.stringify(model.matches),
       optionsSerialized: JSON.stringify(model.options),
+      host: '',
     };
   }
 
@@ -100,6 +103,7 @@ export namespace TournamentV2Model {
       teamsSerialized: JSON.stringify(model.teams),
       matchesSerialized: JSON.stringify(model.matches),
       optionsSerialized: JSON.stringify(model.options),
+      host: '',
     };
   }
 
@@ -107,6 +111,9 @@ export namespace TournamentV2Model {
     const options = JSON.parse(model.optionsSerialized);
     if (options.thirdPlaceFirstPick === undefined) {
       options.thirdPlaceFirstPick = null;
+    }
+    if (options.disallowedmaps === undefined) {
+      options.disallowedmaps = [];
     }
 
     const matches = JSON.parse(model.matchesSerialized) as TournamentV2MatchModel[];
@@ -178,6 +185,7 @@ export namespace TournamentV2Model {
         thirdPlaceWinId: finalRank[2]?.id ?? null,
         thirdPlaceFirstPick: null,
         thirdPlaceMaps: model.thirdPlaceMaps,
+        disallowedmaps: [],
       },
     };
   }

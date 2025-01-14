@@ -37,7 +37,7 @@ export default async function Home() {
 
       </div>
 
-      <div className='absolute bottom-14'>
+      <div className='fixed bottom-14'>
         <Contact />
       </div>
     </main>
