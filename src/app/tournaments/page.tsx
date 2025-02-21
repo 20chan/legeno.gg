@@ -45,7 +45,7 @@ export default async function Page() {
         {tournaments.map(tournament => {
           const ts = new Date(tournament.startDate);
           const isStarted = formatDate(new Date()) === formatDate(ts);
-          const isCancled = formatDate(new Date(Date.now() + 24 * 3600 * 1000)) >= formatDate(ts);
+          const isCancled = formatDate(new Date(Date.now() - 24 * 3600 * 1000)) >= formatDate(ts);
           const isEnded = tournament.matches.every(x => x.winner !== null);
 
           return (
