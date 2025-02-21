@@ -25,16 +25,6 @@ export default async function Home() {
           </div>
         </Link>
 
-        <Link href='/clanwar' className='flex flex-col justify-center items-center w-96 max-w-[90%] py-2 bg-half-yellow/70 hover:bg-half-yellow/50'>
-          <div className='text-4xl sm:text-5xl mb-1 font-title'>
-            clan war
-          </div>
-
-          <div className='text-lg'>
-            2024 클랜전
-          </div>
-        </Link>
-
       </div>
 
       <div className='fixed bottom-14'>
